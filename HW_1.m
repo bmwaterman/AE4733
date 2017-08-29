@@ -16,10 +16,17 @@ omega_rounded = TAS/turn_radius_rounded; % rad/s technically should be negative
 theta_rounded = time_rounded*omega_rounded % rad
 P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x in m
     turn_radius_rounded * sin(theta_rounded); % y in m
-    pi/2 - theta_rounded] % heading in rad wrt x axis
+    pi/2 - theta_rounded]; % heading in rad wrt x axis
 P = [turn_radius; turn_radius; 0];
 error = P_rounded - P; % [m; m; rad]
 vpa(error)
 
+%% 1c
+P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x in m
+    turn_radius_rounded * sin(theta_rounded) + TAS*5; % y in m
+    pi/2 - theta_rounded]; % heading in rad wrt x axis
+P = [turn_radius; turn_radius; 0];
+error = P_rounded - P; % [m; m; rad]
+vpa(error)
 
 
