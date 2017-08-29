@@ -12,14 +12,13 @@ g_rounded = 10; %(m/s^2)
 turn_radius_rounded = vpasolve(bank-atan(((TAS^2)/r)/g_rounded),r,1000); % m
 time_rounded = round(((90*pi/180)*turn_radius_rounded)/TAS); % s
 
-omega_rounded = TAS/turn_radius_rounded; % rad/s technically should be negative
-theta_rounded = time_rounded*omega_rounded % rad
-P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x in m
-    turn_radius_rounded * sin(theta_rounded); % y in m
-    pi/2 - theta_rounded] % heading in rad wrt x axis
+omega_rounded = TAS/turn_radius_rounded; %technically should be negative
+theta_rounded = time_rounded*omega_rounded
+P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x
+    turn_radius_rounded * sin(theta_rounded); % y
+    pi/2 - theta_rounded] % heading
 P = [turn_radius; turn_radius; 0];
-error = P_rounded - P; % [m; m; rad]
+error = P_rounded - P;
 vpa(error)
-
 
 
