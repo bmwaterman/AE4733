@@ -1,6 +1,5 @@
 function [receiver_position, epsilon_c] = trilat_clockbias(satellite_positions, measured_ranges, initial_guess, e1, e2, max_iter)
-%TRILAT_NOCLOCKBIAS Summary of this function goes here
-%   Detailed explanation goes here
+%TRILAT_NOCLOCKBIAS Trilateration for radio ranging
 
 big_fat_one = @(p_r_guess, p_sat) (p_r_guess - p_sat) / norm(p_r_guess - p_sat);
 receiver_position = initial_guess;

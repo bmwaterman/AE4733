@@ -1,4 +1,9 @@
+%%% GNC Homework 1
+% Bailey Waterman, Keshuai Xu
+
 %% 1a
+% We set up the axes that y is due north and the x-y plane is tangent to
+% the earth surface. Turning 90 degrees in x-y plane will  
 TAS = 70; %m/s
 g = 9.8039; %gravitational constant at Boston (m/s^2)
 bank = 20*pi/180; %radians
@@ -17,7 +22,7 @@ theta_rounded = time_rounded*omega_rounded % rad
 P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x in m
     turn_radius_rounded * sin(theta_rounded); % y in m
     pi/2 - theta_rounded]; % heading in rad wrt x axis
-P = [turn_radius; turn_radius; 0];
+P = [turn_radius; turn_radius; 0]; % [m; m; rad]
 error = P_rounded - P; % [m; m; rad]
 vpa(error)
 
@@ -25,12 +30,14 @@ vpa(error)
 P_rounded = [turn_radius_rounded - turn_radius_rounded * cos(theta_rounded); % x in m
     turn_radius_rounded * sin(theta_rounded) + TAS*5; % y in m
     pi/2 - theta_rounded]; % heading in rad wrt x axis
-P = [turn_radius; turn_radius; 0];
+P = [turn_radius; turn_radius; 0]; % [m; m; rad]
 error = P_rounded - P; % [m; m; rad]
 vpa(error)
 
 
-%% 2
+%% 2a
+
+%% 2b
 
 sat_positions = ...
     [90 -70 95;
@@ -50,4 +57,5 @@ rho = ...
     79.1232;
     110.215];
     
-receiver_position = trilat_clockbias(sat_positions(:, 1:4), rho(1:4,:), zeros(3,1), 1e-1, 1e-1, 200)
+[receiver_position, epsilon_c] = trilat_clockbias(sat_positions, rho, zeros(3,1), 1e-3, 1e-3, 1e3)
+
