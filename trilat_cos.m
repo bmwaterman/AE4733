@@ -19,3 +19,4 @@ rho = ...
     110.215];
     
 [receiver_position, epsilon_c] = trilat_clockbias(sat_positions, rho, zeros(3,1), 1e-3, 1e-3, 1e3)
+

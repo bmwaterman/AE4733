@@ -11,10 +11,11 @@ for iter = 1:max_iter
     b = measured_ranges - ones(size(measured_ranges,1),1)*epsilon_c - cellfun(@norm, num2cell(bsxfun(@minus, receiver_position, satellite_positions), 1))';
     d_p = A \ b;
     receiver_position = receiver_position + d_p(1:end-1, :);
-    epsilon_c = epsilon_c + d_p(end-1, :);
+    epsilon_c = epsilon_c + d_p(end, :);
     if norm(d_p) < e1 || norm(b) < e2
         return
     end
 end
 display('reached maximum iteration')
+b
 end
