@@ -1,4 +1,4 @@
-%%% GNC Homework 1
+%% GNC Homework 1
 % Bailey Waterman, Keshuai Xu
 
 %% 1a
@@ -57,11 +57,6 @@ vpa(error, 6)
 %
 
 %% 2b
-% Result:
-%
-% <<q2b.jpg>>
-%
-% Trilateration function:
 %
 % <include>trilat_clockbias.m</include>
 % 
@@ -73,7 +68,7 @@ sat_positions = ...
     60 80 -70;
     80 90 100;
     35 -45 55;
-    -80 65 20]';
+    -80 65 20]'; % km
 
 rho = ...
     [139.533;
@@ -82,7 +77,11 @@ rho = ...
     126.191;
     120.315;
     79.1232;
-    110.215];
+    110.215]; % km
     
-[receiver_position, epsilon_c] = trilat_clockbias(sat_positions, rho, zeros(3,1), 1e-6, 1e-6, 1e3)
+[receiver_position, epsilon_c] = trilat_clockbias(sat_positions, rho, zeros(3,1), 1e-6, 1e-6, 1e3) % all in km
+
+c = 299792458; %m/s
+
+clock_bias = epsilon_c * 1e3 /c % sec
 
