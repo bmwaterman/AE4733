@@ -65,3 +65,9 @@ ylabel ('angle(deg)')
 legend ('yaw(psi)','pitch(theta)','roll(phi)')
 %% 3a
 
+
+v_dot_i = @(t) [hw2_a_t(t)*cos(hw2_psi(t)) - hw2_psi_dot(t)*hw2_v(t)*sin(hw2_psi(t));
+            hw2_a_t(t)*sin(hw2_psi(t)) + hw2_psi_dot(t)*hw2_v(t)*cos(hw2_psi(t));
+            0];
+
+integral(v_dot_i,0,40,'ArrayValued',1)
