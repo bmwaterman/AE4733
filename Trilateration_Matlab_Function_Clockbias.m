@@ -13,7 +13,7 @@ receiver_position_guess_n = [10;10;10] %this is p_r^n
 epsilon_c = [0; 0; 0; 0]  
 
 % Big while look that repeats linear solutions
-epsilon_close = 0.1;
+epsilon_close = 1;
 max_iterations = 100;
 
 some_condition = true;
@@ -29,18 +29,18 @@ while (some_condition)
     big_fat_one_4 = (receiver_position_guess_n - satellite_positions(:, 4)) / norm(receiver_position_guess_n - satellite_positions(:, 4));
     big_fat_one_4 = [big_fat_one_4; 1];
     
-    A = [big_fat_one_1'; big_fat_one_2'; big_fat_one_3'; big_fat_one_4'] 
+    A = [big_fat_one_1'; big_fat_one_2'; big_fat_one_3'; big_fat_one_4']; 
     b = measured_ranges - epsilon_c - [norm(receiver_position_guess_n - satellite_positions(:, 1));...
         norm(receiver_position_guess_n - satellite_positions(:, 2));...
         norm(receiver_position_guess_n - satellite_positions(:, 3));...
-        norm(receiver_position_guess_n - satellite_positions(:, 4))] ;
+        norm(receiver_position_guess_n - satellite_positions(:, 4))] 
    
     % solve linear equation
     % delta_p = A^(-1) * b
     delta_p = A \ b;
     
     % update guess of reciever position
-    receiver_position_guess_n = receiver_position_guess_n + delta_p(1:3,:);
+    receiver_position_guess_n = receiver_position_guess_n + delta_p(1:3,:)
     epsilon_c = delta_p(4,:)
     n_iter = n_iter + 1;
     
