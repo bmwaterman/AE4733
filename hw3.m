@@ -24,6 +24,18 @@ title('euler angles');
 legend ('yaw(psi)','pitch(theta)','roll(phi)')
 
 %% problem 6
+p6_data = load ('hw3_p6.mat');
+% p6_temperature = p6_data.measurements(1:1500);
+% p6_angle_deg = p6_data(1501:3000);
+% p6_range = p6_data(3001:5000);
+
+t0 = 288.16; % Kelvin
+a1 = -6.5e-3; % Kelvin/meter
+
+offset = [- t0 * ones(1500, 1); zeros(3500,1)];
+z = p6_data.measurements + offset;
+C = [ones(1500,1) * a1; ones(1500,1) * 180 / (pi * 1e4); ones(2000,1)];
+xi = C \ z % TODO: add noise column
 
 %% problem 7.1
 clear variables
