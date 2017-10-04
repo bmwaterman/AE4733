@@ -32,10 +32,16 @@ p6_data = load ('hw3_p6.mat');
 t0 = 288.16; % Kelvin
 a1 = -6.5e-3; % Kelvin/meter
 
+N_temp = normrnd(0, 2, 1500,1);    % Normrnd function creates random numbers within the standard deviation
+N_angle = normrnd(0, 0.5, 1500, 1); % I made a 1500x1 matrix of random #s for temperature, a 1500x1 matrix with random #s 
+N_range = normrnd(0, 100, 2000, 1); % for angle and a 200x1 matrix with random #s for range
+
+N = [N_temp; N_angle; N_range;]; %I combined these three noise readings to form a single matrix
+
 offset = [- t0 * ones(1500, 1); zeros(3500,1)];
-z = p6_data.measurements + offset;
-C = [ones(1500,1) * a1; ones(1500,1) * 180 / (pi * 1e4); ones(2000,1)];
-xi = C \ z % TODO: add noise column
+z = (p6_data.measurements + offset) - N;                                % I subtracted the noise from the measurements %% this is the part I'm not sure about beacause
+C = [ones(1500,1) * a1; ones(1500,1) * 180 / (pi * 1e4); ones(2000,1)]; % I'm not sure adjusting the equation he gave us in class like this will still result in 
+xi = C \ z                                                              % the least squares estimate formula
 
 %% problem 7.1
 clear variables
