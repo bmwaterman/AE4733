@@ -30,7 +30,7 @@ p6_data = load ('hw3_p6.mat');
 % p6_range = p6_data(3001:5000);
 
 t0 = 288.16; % Kelvin
-a1 = -6.5e-3; % Kelvin/meter
+a1 = -6.5e-3; % Kelvin/meter.
 
 N_temp = normrnd(0, 2, 1500,1);    % Normrnd function creates random numbers within the standard deviation
 N_angle = normrnd(0, 0.5, 1500, 1); % I made a 1500x1 matrix of random #s for temperature, a 1500x1 matrix with random #s 
