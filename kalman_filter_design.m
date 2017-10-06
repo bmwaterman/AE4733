@@ -1,5 +1,5 @@
 clear variables
-syms gyro_x gyro_y gyro_z mag_x mag_y mag_z psi theta phi psid thetad phid real
+syms gyro_x gyro_y gyro_z mag_x mag_y mag_z psi theta phi psid thetad phid dt real
 
 %% rotations
 % x rotation phi
@@ -35,12 +35,50 @@ omega_ie_e = R_b_e * R_a_b * [0 0 psid]' + R_b_e * [0 thetad 0]' + [phid 0 0]'
 %% EKF
 x = [psi theta phi psid thetad phid]';
 
-f = x + [x(4:6); 0; 0; 0];
+f = x + dt * [x(4:6); 0; 0; 0];
 F = jacobian(f, x)
 
-z = [gyro_x gyro_y gyro_z mag_x mag_y mag_z]';
+% z = [gyro_x gyro_y gyro_z mag_x mag_y mag_z]';
 h = [omega_ie_e; mag_e];
 H = jacobian(h, x)
 
+%%
+n_states = 6;
+n_measurements = 6;
+x_prev = zeros(6,1);
+u_prev = 0.5;
+P_prev = 0;
+Q = diag(ones(n_states,1)) * 0.0001;
+R = diag([1 1 1 1 1 1000000]) * 0.00001;
+
+data = csvread('hw3q7.csv',1,0);
+time_stamp = data(:, 1)';
+gyro_readings = data(:, 5:7)'; % csv data is roll pitch yaw
+mag_readings = data(:, 8:10)';
+
+normalize = @(v) v/norm(v);
+
+for col = 1:size(mag_readings,2)
+    mag_readings(:, col) = normalize(mag_readings(:, col));
+end
+
+z = [gyro_readings; mag_readings];
+f_fun = matlabFunction(f, 'Vars', {x,dt});
+F_fun = matlabFunction(F, 'Vars', {x,dt});
+h_fun = matlabFunction(h, 'Vars', {x});
+H_fun = matlabFunction(H, 'Vars', {x});
+
+x_traj = zeros(6, size(z,2));
+
+for t = 1:size(z,2)
+    [ x_estimate, P_estimate ] = kalman_sensor_fusion(x_prev, u_prev, P_prev, f_fun, F_fun, h_fun, H_fun, z(:, t), Q, R);
+    x_traj(:, t) = x_estimate;
+    x_prev = x_estimate;
+    P_prev = P_estimate;
+end
+
+plot(time_stamp, x_traj(1:3,:))
+figure();
+plot(time_stamp, x_traj(4:6,:))
 
 
