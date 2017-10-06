@@ -7,7 +7,7 @@ y = z - h(x_predict);
 S = H(x_predict) * P_predict * H(x_predict)' + R;
 K = P_predict * H(x_predict)' / S;
 x_estimate = x_predict + K * y;
-P_estimate = (eye(size(H(x_predict),1)) - K * H(x_predict)) * P_predict;
+P_estimate = (eye(size(x_prev)) - K * H(x_predict)) * P_predict;
 
 end
 

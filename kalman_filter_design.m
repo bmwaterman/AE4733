@@ -1,5 +1,5 @@
 clear variables
-syms gyro_x gyro_y gyro_z mag_x mag_y mag_z psi theta phi psid thetad phid dt real
+syms gyro_x gyro_y gyro_z mag_x mag_y mag_z acc_x acc_y acc_z psi theta phi psid thetad phid dt real
 
 %% rotations
 % x rotation phi
@@ -32,6 +32,9 @@ mag_e = R_b_e * R_a_b * R_i_a * mag_i;
 % phid_gyro = omega_ie_i(3);
 omega_ie_e = R_b_e * R_a_b * [0 0 psid]' + R_b_e * [0 thetad 0]' + [phid 0 0]'
 
+%% use gravity to keep track of the orientation...
+acc_e = R_b_e * R_a_b * R_i_a * [0 0 1]';
+
 %% EKF
 x = [psi theta phi psid thetad phid]';
 
@@ -39,22 +42,26 @@ f = x + dt * [x(4:6); 0; 0; 0];
 F = jacobian(f, x)
 
 % z = [gyro_x gyro_y gyro_z mag_x mag_y mag_z]';
-h = [omega_ie_e; mag_e];
+h = [omega_ie_e; mag_e; acc_e];
 H = jacobian(h, x)
 
 %%
 n_states = 6;
-n_measurements = 6;
+n_measurements = 9;
 x_prev = zeros(6,1);
 u_prev = 0.5;
 P_prev = 0;
-Q = diag(ones(n_states,1)) * 0.0001;
-R = diag([1 1 1 1 1 1000000]) * 0.00001;
+Q = diag(ones(n_states,1)) * 0.01;
+R = diag(ones(n_measurements,1)) * 0.01;
 
 data = csvread('hw3q7.csv',1,0);
 time_stamp = data(:, 1)';
+acc_readings = data(:, 2:4)';
 gyro_readings = data(:, 5:7)'; % csv data is roll pitch yaw
 mag_readings = data(:, 8:10)';
+
+%hack
+mag_readings(3, :) = zeros(1, size(mag_readings,2));
 
 normalize = @(v) v/norm(v);
 
@@ -62,7 +69,11 @@ for col = 1:size(mag_readings,2)
     mag_readings(:, col) = normalize(mag_readings(:, col));
 end
 
-z = [gyro_readings; mag_readings];
+for col = 1:size(acc_readings,2)
+    acc_readings(:, col) = normalize(acc_readings(:, col));
+end
+
+z = [gyro_readings; mag_readings; acc_readings];
 f_fun = matlabFunction(f, 'Vars', {x,dt});
 F_fun = matlabFunction(F, 'Vars', {x,dt});
 h_fun = matlabFunction(h, 'Vars', {x});
