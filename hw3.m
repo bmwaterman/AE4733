@@ -51,7 +51,7 @@ plot(data(:, 1),data(:, 2:end))
 y0 = [zeros(3,1);zeros(3,1); zeros(3,1)];
 p7_data.time_stamp = data(:, 1)';
 p7_data.accel_readings = data(:, 2:4)';
-p7_data.gyro_readings = data(:, 7:-1:5)'; % csv data is roll pitch yaw
+p7_data.gyro_readings = data(:, 5:7)';
 [t_sim, y_sim] = ode45(@(t,y) ins_fun(t,y,p7_data), p7_data.time_stamp, y0);
 
 figure();
