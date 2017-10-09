@@ -1,0 +1,385 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hw3</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-09"><meta name="DC.source" content="hw3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">homework 3</a></li><li><a href="#2">Problem 4</a></li><li><a href="#3">problem 6</a></li><li><a href="#4">problem 7</a></li><li><a href="#5">problem 8</a></li></ul></div><h2>homework 3<a name="1"></a></h2><p>Bailey Waterman and Keshuai Xu</p><pre class="codeinput">clear <span class="string">variables</span>, clc, close <span class="string">all</span>
+</pre><h2>Problem 4<a name="2"></a></h2><pre class="language-matlab">
+<span class="comment">%Create a function to write down the differnetial equations</span>
+<span class="keyword">function</span> state_dot = ins_fun(t,state_xi, DATA)
+<span class="comment">%Time is always the first variable, state you're trying to integrate is</span>
+<span class="comment">%second input</span>
+
+<span class="comment">% need accel_meas_t from accel_meas</span>
+<span class="comment">% need omega_iee from rate_gyros_meas</span>
+<span class="comment">%pull out correct column</span>
+current_timestamp_col = find((t &gt;= DATA.time_stamp), 1, <span class="string">'last'</span>);
+accel_meas_t = DATA.accel_readings(:, current_timestamp_col);
+omega_iee = DATA.gyro_readings(:, current_timestamp_col);
+
+grav_tt = [0; 0; 9.81];
+omega_icc = [0, 0, 2*pi/86400]';
+
+<span class="comment">% posn_tt = state_xi(1:3);</span>
+vel_tt = state_xi(4:6);
+yaw_321 = state_xi(7);
+pitch_321 = state_xi(8);
+roll_321 = state_xi(9);
+
+mu_lat = deg2rad(42.271167);
+mu_long = deg2rad(-71.807627);
+
+<span class="comment">% 3-2 rotation involving latitude and longitude</span>
+Rct = [cos(-(pi/2 + mu_lat)) 0 -sin(-(pi/2 + mu_lat));
+        0 1 0;
+        sin(-(pi/2 + mu_lat)) 0 cos(-(pi/2 + mu_lat))] * <span class="keyword">...</span>
+      [cos(mu_long) sin(mu_long) 0;
+      -sin(mu_long) cos(mu_long) 0;
+      0 0 1];
+
+Rte = <span class="keyword">...</span>
+    [1 0 0;
+    0 cos(roll_321) sin(roll_321);
+    0 -sin(roll_321) cos(roll_321)] * <span class="keyword">...</span>
+    [cos(pitch_321) 0 -sin(pitch_321);
+    0 1 0;
+    sin(pitch_321) 0 cos(pitch_321)] * <span class="keyword">...</span>
+    [cos(yaw_321) sin(yaw_321) 0;
+    -sin(yaw_321) cos(yaw_321) 0;
+    0 0 1];
+
+<span class="comment">% Ret = inv(Rte); % 321 rotation involving yaw, pitch, and roll</span>
+Rce = Rte * Rct; <span class="comment">% define correctly from the previous two</span>
+
+omega_itt = Rct * omega_icc;
+
+H_321 = [-sin(pitch_321) 0 1;
+    sin(roll_321)*cos(pitch_321) cos(roll_321) 0;
+    cos(roll_321)*cos(pitch_321) -sin(roll_321) 0];
+
+posn_dot = vel_tt;
+vel_dot = Rte \ accel_meas_t + grav_tt - 2*cross(omega_itt, vel_tt);
+angles_dot = H_321 \ (omega_iee - Rce*omega_icc);
+
+state_dot = [posn_dot; vel_dot; angles_dot];
+
+
+</pre><pre class="codeinput">p4_data = load(<span class="string">'hw3_p4.mat'</span>);
+y0 = [p4_data.ptt_0; p4_data.vtt_0; p4_data.yaw_0; p4_data.ptc_0; p4_data.rol_0];
+[t_sim, y_sim] = ode45(@(t,y) ins_fun(t,y,p4_data), p4_data.time_stamp, y0);
+
+figure();
+plot3(y_sim(:,1),y_sim(:,2),y_sim(:,3));
+title(<span class="string">'position trajectory'</span>)
+
+figure();
+plot(t_sim, y_sim(:,4:6));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'velocity (m/s)'</span>);
+title(<span class="string">'velocity'</span>);
+
+figure();
+plot(t_sim, rad2deg(y_sim(:,6:9)));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'euler angles (deg)'</span>);
+title(<span class="string">'euler angles'</span>);
+legend (<span class="string">'yaw(psi)'</span>,<span class="string">'pitch(theta)'</span>,<span class="string">'roll(phi)'</span>)
+</pre><img vspace="5" hspace="5" src="hw3_01.png" alt=""> <img vspace="5" hspace="5" src="hw3_02.png" alt=""> <img vspace="5" hspace="5" src="hw3_03.png" alt=""> <h2>problem 6<a name="3"></a></h2><pre class="codeinput">p6_data = load (<span class="string">'hw3_p6.mat'</span>);
+
+<span class="comment">% We scaled the m to km to fix bad scaling</span>
+
+t0 = 288.16; <span class="comment">% Kelvin</span>
+a1 = -6.5; <span class="comment">% Kelvin/km.</span>
+
+<span class="comment">% units in Kelvin, deg, km</span>
+R = sparse(diag([2 * ones(1500,1); 0.5 * ones(1500,1); 0.1 * ones(2000,1)].^2));
+
+offset = [- t0 * ones(1500, 1); zeros(3500,1)];
+scale = [ones(3000,1); 1e-3 * ones(2000,1)];
+z = p6_data.measurements .* scale + offset;
+C = sparse([a1 * ones(1500,1); ones(1500,1) * 180 / (pi * 1e1); ones(2000,1)]);
+
+xi_hat = inv(C' * inv(R) * C ) * C' * inv(R) * z; <span class="comment">% km</span>
+xi_hat_m = xi_hat * 1e3 <span class="comment">% m</span>
+</pre><pre class="codeoutput">
+xi_hat_m =
+
+  996.7334
+
+</pre><h2>problem 7<a name="4"></a></h2><p>The trajectory is captured walking in a ~10 m hall way back and forth. at end of the straight segment I always turned around in z+ direction.</p><pre class="codeinput">clear <span class="string">variables</span>
+close <span class="string">all</span>
+data = csvread(<span class="string">'hw3q7_2.csv'</span>,1,0);
+t = data(:, 1);
+
+figure();
+plot(t,data(:, 2:4));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'proper acceleration (m*s^-2)'</span>);
+legend (<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>)
+
+figure();
+plot(t,data(:, 5:7));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'gyro (rad/s)'</span>);
+legend (<span class="string">'wx'</span>,<span class="string">'wy'</span>,<span class="string">'wz'</span>)
+
+figure();
+plot(t,data(:, 8:10));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'magnetometer (uT)'</span>);
+legend (<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>)
+
+figure();
+plot(t,data(:, 11:13));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'heading from tilt corrected magnetometer (deg)'</span>);
+legend (<span class="string">'roll'</span>,<span class="string">'pitch'</span>,<span class="string">'yaw'</span>)
+
+figure();
+plot(t,0.01 * data(:, 14:15));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'deg'</span>);
+legend (<span class="string">'lat'</span>,<span class="string">'long'</span>)
+
+figure();
+plot(t,data(:, 16));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'altitude (cm)'</span>);
+
+figure();
+plot(t,data(:, 17));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'speed (kt)'</span>);
+
+figure();
+plot(t,data(:, 18));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'heading (deg)'</span>);
+</pre><img vspace="5" hspace="5" src="hw3_04.png" alt=""> <img vspace="5" hspace="5" src="hw3_05.png" alt=""> <img vspace="5" hspace="5" src="hw3_06.png" alt=""> <img vspace="5" hspace="5" src="hw3_07.png" alt=""> <img vspace="5" hspace="5" src="hw3_08.png" alt=""> <img vspace="5" hspace="5" src="hw3_09.png" alt=""> <img vspace="5" hspace="5" src="hw3_10.png" alt=""> <img vspace="5" hspace="5" src="hw3_11.png" alt=""> <h2>problem 8<a name="5"></a></h2><p>The calculated trajectory reflected the turning, but the acceleromter bias caused position and linear velocity drift. The gyro also exhibits bias.</p><pre class="codeinput">y0 = [zeros(3,1);zeros(3,1); [0; 0; pi]];
+p7_data.time_stamp = data(:, 1)';
+p7_data.accel_readings = data(:, 2:4)';
+p7_data.gyro_readings = data(:, 5:7)';
+[t_sim, y_sim] = ode45(@(t,y) ins_fun(t,y,p7_data), p7_data.time_stamp, y0);
+
+figure();
+plot3(y_sim(:,1),y_sim(:,2),y_sim(:,3));
+title(<span class="string">'position trajectory'</span>)
+
+figure();
+plot(t_sim, y_sim(:,4:6));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'velocity (m/s)'</span>);
+title(<span class="string">'velocity'</span>);
+
+figure();
+plot(t_sim, rad2deg(y_sim(:,6:9)));
+xlabel(<span class="string">'time (sec)'</span>);
+ylabel (<span class="string">'euler angles (deg)'</span>);
+title(<span class="string">'euler angles'</span>);
+legend (<span class="string">'yaw(psi)'</span>,<span class="string">'pitch(theta)'</span>,<span class="string">'roll(phi)'</span>)
+</pre><img vspace="5" hspace="5" src="hw3_12.png" alt=""> <img vspace="5" hspace="5" src="hw3_13.png" alt=""> <img vspace="5" hspace="5" src="hw3_14.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% homework 3
+% Bailey Waterman and Keshuai Xu
+
+clear variables, clc, close all
+%% Problem 4
+%
+% <include>ins_fun.m</include>
+%
+
+p4_data = load('hw3_p4.mat');
+y0 = [p4_data.ptt_0; p4_data.vtt_0; p4_data.yaw_0; p4_data.ptc_0; p4_data.rol_0];
+[t_sim, y_sim] = ode45(@(t,y) ins_fun(t,y,p4_data), p4_data.time_stamp, y0);
+
+figure();
+plot3(y_sim(:,1),y_sim(:,2),y_sim(:,3));
+title('position trajectory')
+
+figure();
+plot(t_sim, y_sim(:,4:6));
+xlabel('time (sec)');
+ylabel ('velocity (m/s)');
+title('velocity');
+
+figure();
+plot(t_sim, rad2deg(y_sim(:,6:9)));
+xlabel('time (sec)');
+ylabel ('euler angles (deg)');
+title('euler angles');
+legend ('yaw(psi)','pitch(theta)','roll(phi)')
+
+%% problem 6
+p6_data = load ('hw3_p6.mat');
+
+% We scaled the m to km to fix bad scaling
+
+t0 = 288.16; % Kelvin
+a1 = -6.5; % Kelvin/km.
+
+% units in Kelvin, deg, km
+R = sparse(diag([2 * ones(1500,1); 0.5 * ones(1500,1); 0.1 * ones(2000,1)].^2));
+
+offset = [- t0 * ones(1500, 1); zeros(3500,1)];
+scale = [ones(3000,1); 1e-3 * ones(2000,1)];
+z = p6_data.measurements .* scale + offset;
+C = sparse([a1 * ones(1500,1); ones(1500,1) * 180 / (pi * 1e1); ones(2000,1)]);
+
+xi_hat = inv(C' * inv(R) * C ) * C' * inv(R) * z; % km
+xi_hat_m = xi_hat * 1e3 % m
+%% problem 7
+%
+% The trajectory is captured walking in a ~10 m hall way back and forth. at
+% end of the straight segment I always turned around in z+ direction. 
+%
+
+clear variables
+close all
+data = csvread('hw3q7_2.csv',1,0);
+t = data(:, 1);
+
+figure();
+plot(t,data(:, 2:4));
+xlabel('time (sec)');
+ylabel ('proper acceleration (m*s^-2)');
+legend ('x','y','z')
+
+figure();
+plot(t,data(:, 5:7));
+xlabel('time (sec)');
+ylabel ('gyro (rad/s)');
+legend ('wx','wy','wz')
+
+figure();
+plot(t,data(:, 8:10));
+xlabel('time (sec)');
+ylabel ('magnetometer (uT)');
+legend ('x','y','z')
+
+figure();
+plot(t,data(:, 11:13));
+xlabel('time (sec)');
+ylabel ('heading from tilt corrected magnetometer (deg)');
+legend ('roll','pitch','yaw')
+
+figure();
+plot(t,0.01 * data(:, 14:15));
+xlabel('time (sec)');
+ylabel ('deg');
+legend ('lat','long')
+
+figure();
+plot(t,data(:, 16));
+xlabel('time (sec)');
+ylabel ('altitude (cm)');
+
+figure();
+plot(t,data(:, 17));
+xlabel('time (sec)');
+ylabel ('speed (kt)');
+
+figure();
+plot(t,data(:, 18));
+xlabel('time (sec)');
+ylabel ('heading (deg)');
+
+
+
+
+
+%% problem 8
+%
+% The calculated trajectory reflected the turning, but the acceleromter
+% bias caused position and linear velocity drift. The gyro also exhibits
+% bias.
+%
+
+y0 = [zeros(3,1);zeros(3,1); [0; 0; pi]];
+p7_data.time_stamp = data(:, 1)';
+p7_data.accel_readings = data(:, 2:4)';
+p7_data.gyro_readings = data(:, 5:7)';
+[t_sim, y_sim] = ode45(@(t,y) ins_fun(t,y,p7_data), p7_data.time_stamp, y0);
+
+figure();
+plot3(y_sim(:,1),y_sim(:,2),y_sim(:,3));
+title('position trajectory')
+
+figure();
+plot(t_sim, y_sim(:,4:6));
+xlabel('time (sec)');
+ylabel ('velocity (m/s)');
+title('velocity');
+
+figure();
+plot(t_sim, rad2deg(y_sim(:,6:9)));
+xlabel('time (sec)');
+ylabel ('euler angles (deg)');
+title('euler angles');
+legend ('yaw(psi)','pitch(theta)','roll(phi)')
+
+
+##### SOURCE END #####
+--></body></html>
