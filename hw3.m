@@ -22,7 +22,7 @@ ylabel ('velocity (m/s)');
 title('velocity');
 
 figure();
-plot(t_sim, rad2deg(y_sim(:,6:9)));
+plot(t_sim, rad2deg(y_sim(:,7:9)));
 xlabel('time (sec)');
 ylabel ('euler angles (deg)');
 title('euler angles');
@@ -48,8 +48,10 @@ xi_hat = inv(C' * inv(R) * C ) * C' * inv(R) * z; % km
 xi_hat_m = xi_hat * 1e3 % m
 %% problem 7
 %
-% The trajectory is captured walking in a ~10 m hall way back and forth. at
-% end of the straight segment I always turned around in z+ direction. 
+% The trajectory is captured walking in a ~10 m glass ceiling hall way back and forth. at
+% end of the straight segment I always turned around in local z+ direction. 
+% The body frame x axis points at the walking direction, and z points at
+% the sky (roll = pi).
 %
 
 clear variables
@@ -84,23 +86,23 @@ legend ('roll','pitch','yaw')
 figure();
 plot(t,0.01 * data(:, 14:15));
 xlabel('time (sec)');
-ylabel ('deg');
+ylabel ('gps coordinate (deg)');
 legend ('lat','long')
 
 figure();
 plot(t,data(:, 16));
 xlabel('time (sec)');
-ylabel ('altitude (cm)');
+ylabel ('gps altitude (cm)');
 
 figure();
 plot(t,data(:, 17));
 xlabel('time (sec)');
-ylabel ('speed (kt)');
+ylabel ('gps speed (kt)');
 
 figure();
 plot(t,data(:, 18));
 xlabel('time (sec)');
-ylabel ('heading (deg)');
+ylabel ('gps heading (deg)');
 
 
 
@@ -130,7 +132,7 @@ ylabel ('velocity (m/s)');
 title('velocity');
 
 figure();
-plot(t_sim, rad2deg(y_sim(:,6:9)));
+plot(t_sim, rad2deg(y_sim(:,7:9)));
 xlabel('time (sec)');
 ylabel ('euler angles (deg)');
 title('euler angles');
