@@ -9,6 +9,9 @@
 #include <Adafruit_BMP085_U.h> // Barometer
 #include <Adafruit_10DOF.h> // IMU API
 #include <Adafruit_GPS.h>   // GPS receiver firmware
+#include <TimerOne.h>
+
+void readgps();
 
 
 #define mySerial Serial1
@@ -75,8 +78,8 @@ void displaySensorDetails(void)
  
 void setup() {
  
-  Serial.begin(115200);
-  Serial.println(F("AHSL")); Serial.println("");
+  Serial.begin(250000);
+  // Serial.println(F("AHSL")); Serial.println("");
 
   // GPS receiver setup
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's
@@ -84,7 +87,7 @@ void setup() {
   mySerial.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-  GPS.sendCommand(PGCMD_ANTENNA);
+  GPS.sendCommand(PGCMD_NOANTENNA);
  
   // SD Card Setup
   Serial.print("Initializing SD card...");
@@ -141,7 +144,7 @@ void setup() {
   // GYRO END
  
   // Display some basic information on this sensor
-  displaySensorDetails();
+  // displaySensorDetails();
  
   // String header row
   dataString += "Time (s), ";
@@ -180,6 +183,9 @@ void setup() {
   else {
     Serial.println("error opening data file.");
   }
+
+  Timer1.initialize(1000);
+  Timer1.attachInterrupt(readgps);
   
 }
  
@@ -199,72 +205,77 @@ void loop() {
 
   
   // Read GPS NMEA sentence
-  char gps_data = GPS.read();
+  // char gps_data = GPS.read();
+  // Serial.println(gps_data);
   //if (gps_data) Serial.print(gps_data);
   // if a sentence is received, we can check the checksum, parse it...
   if (GPS.newNMEAreceived()) {
     // a tricky thing here is if we print the NMEA sentence, or data
     // we end up not listening and catching other sentences! 
+
+    // Serial.println(GPS.lastNMEA());
     
-    if (!GPS.parse(GPS.lastNMEA()))   // this also sets the newNMEAreceived() flag to false
+    if (!GPS.parse(GPS.lastNMEA())){
+      // Serial.println("broken");
+      // this also sets the newNMEAreceived() flag to false
       return;  // we can fail to parse a sentence in which case we should just wait for another
+    }
+
+
+    gps_latitude   = GPS.latitude;
+    gps_longitude  = GPS.longitude;
+    gps_n_sat      = (int)GPS.satellites;
+    gps_speed      = GPS.speed;
+    gps_heading    = GPS.angle;
+    gps_altitude   = GPS.altitude;
+
+    
   }
  
-  if (timer_gps > millis())  timer_gps = millis();
-  if (millis() - timer_gps > 2000) { 
-    timer_gps = millis(); // reset the timer
+  // if (timer_gps > millis())  timer_gps = millis();
+  // if (millis() - timer_gps > 2000) { 
+  //   timer_gps = millis(); // reset the timer
 
-    // Variables to store GPS data
-    gps_latitude   = 0;
-    gps_longitude  = 0;
-    gps_n_sat      = 0;
-    gps_speed      = 0;
-    gps_heading    = 0;
-    gps_altitude   = 0;
+  //   // Variables to store GPS data
+  //   gps_latitude   = 0;
+  //   gps_longitude  = 0;
+  //   gps_n_sat      = 0;
+  //   gps_speed      = 0;
+  //   gps_heading    = 0;
+  //   gps_altitude   = 0;
     
-    Serial.print("\nTime: ");
-    Serial.print(GPS.hour, DEC); Serial.print(':');
-    Serial.print(GPS.minute, DEC); Serial.print(':');
-    Serial.print(GPS.seconds, DEC); Serial.print('.');
-    Serial.println(GPS.milliseconds);
-    Serial.print("Date: ");
-    Serial.print(GPS.day, DEC); Serial.print('/');
-    Serial.print(GPS.month, DEC); Serial.print("/20");
-    Serial.println(GPS.year, DEC);
-    Serial.print("Fix: "); Serial.print((int)GPS.fix);
-    Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
-    if (GPS.fix) {
-      Serial.print("Location: ");
-      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-      Serial.print(", "); 
-      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+  //   // Serial.print("\nTime: ");
+  //   // Serial.print(GPS.hour, DEC); Serial.print(':');
+  //   // Serial.print(GPS.minute, DEC); Serial.print(':');
+  //   // Serial.print(GPS.seconds, DEC); Serial.print('.');
+  //   // Serial.println(GPS.milliseconds);
+  //   // Serial.print("Date: ");
+  //   // Serial.print(GPS.day, DEC); Serial.print('/');
+  //   // Serial.print(GPS.month, DEC); Serial.print("/20");
+  //   // Serial.println(GPS.year, DEC);
+  //   // Serial.print("Fix: "); Serial.print((int)GPS.fix);
+  //   // Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
+  //   if (GPS.fix) {
+  //     // Serial.print("Location: ");
+  //     // Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+  //     // Serial.print(", "); 
+  //     // Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
       
-      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-      Serial.print("Angle: "); Serial.println(GPS.angle);
-      Serial.print("Altitude: "); Serial.println(GPS.altitude);
-      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+  //     // Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+  //     // Serial.print("Angle: "); Serial.println(GPS.angle);
+  //     // Serial.print("Altitude: "); Serial.println(GPS.altitude);
+  //     // Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
 
 
-      gps_latitude   = GPS.latitude;
-      gps_longitude  = GPS.longitude;
-      gps_n_sat      = (int)GPS.satellites;
-      gps_speed      = GPS.speed;
-      gps_heading    = GPS.angle;
-      gps_altitude   = GPS.altitude;
-    }   
+  //     gps_latitude   = GPS.latitude;
+  //     gps_longitude  = GPS.longitude;
+  //     gps_n_sat      = (int)GPS.satellites;
+  //     gps_speed      = GPS.speed;
+  //     gps_heading    = GPS.angle;
+  //     gps_altitude   = GPS.altitude;
+  //   }   
     
-    // Append GPS data
-    dataString += String(gps_latitude);
-    dataString += ", ";
-    dataString += String(gps_longitude);
-    dataString += ", ";
-    dataString += String(gps_altitude);
-    dataString += ", ";
-    dataString += String(gps_speed);
-    dataString += ", ";
-    dataString += String(gps_heading);
-    dataString += ", ";
-    dataString += String(gps_n_sat);
+
 
     // open the file. note that only one file can be open at a time,
     // so you have to close this one before opening another.
@@ -281,12 +292,12 @@ void loop() {
     // else {
     //   Serial.println("error opening data file");
     // }
-  }
+  // }
 
-
-  if (timer_imu > millis())  timer_imu = millis();
-  if(millis()- timer_imu > 500){
-    timer_imu = millis();
+  uint32_t current_time = millis();
+  if (timer_imu > current_time)  timer_imu = current_time;
+  if(current_time - timer_imu > 0){
+    timer_imu = current_time;
     
     // Get a new sensor event
     sensors_event_t event;
@@ -308,17 +319,17 @@ void loop() {
    
   
    // append measurement second timestand to datastring
-    dataString += String(timestamp);
+    dataString += String(timestamp, 3);
     dataString += ", ";
     
    // append accelerations to datastring
   
     
-    dataString += String(accelx);
+    dataString += String(accelx, 4);
     dataString += ", ";
-    dataString += String(accely); 
+    dataString += String(accely, 4); 
     dataString += ", ";
-    dataString += String(accelz);
+    dataString += String(accelz, 4);
     dataString += ", ";
    
     // read sensors and append data to the string:
@@ -329,11 +340,11 @@ void loop() {
     double gyroz = event.gyro.z ;
    
     // append angular rates to datastring
-    dataString += String(gyrox);
+    dataString += String(gyrox, 4);
     dataString += ", ";
-    dataString += String(gyroy);
+    dataString += String(gyroy, 4);
     dataString += ", ";
-    dataString += String(gyroz);
+    dataString += String(gyroz, 4);
     dataString += ", ";
    
     // read sensors and append data to the string:
@@ -344,11 +355,11 @@ void loop() {
     double magz = event.magnetic.z ;
    
     // append magnetic field values to datastring
-    dataString += String(magx) ;
+    dataString += String(magx, 4) ;
     dataString += ", ";
-    dataString += String(magy) ;
+    dataString += String(magy, 4) ;
     dataString += ", ";
-    dataString += String(magz) ;
+    dataString += String(magz, 4) ;
     dataString += ", ";
     
    
@@ -371,14 +382,27 @@ void loop() {
       // Do something with the compensated data in mag_event!
       if (dof.fusionGetOrientation(&accel_event, &mag_event, &orientation))
       {
-        dataString += String(orientation.roll) ;
+        dataString += String(orientation.roll, 4) ;
         dataString += ", ";
-        dataString += String(orientation.pitch) ;
+        dataString += String(orientation.pitch, 4) ;
         dataString += ", ";
-        dataString += String(orientation.heading) ;
+        dataString += String(orientation.heading, 4) ;
         dataString += ", ";
       }
     }
+
+        // Append GPS data
+        dataString += String(gps_latitude, 4);
+        dataString += ", ";
+        dataString += String(gps_longitude, 4);
+        dataString += ", ";
+        dataString += String(gps_altitude);
+        dataString += ", ";
+        dataString += String(gps_speed);
+        dataString += ", ";
+        dataString += String(gps_heading);
+        dataString += ", ";
+        dataString += String(gps_n_sat);
     
     // open the file. note that only one file can be open at a time,
     // so you have to close this one before opening another.
@@ -388,14 +412,21 @@ void loop() {
     // if the file is available, write to it:
     if (dataFile) {
       dataFile.println(dataString);
+      Serial.println(dataString);
       dataFile.flush();
       // dataFile.close();
       // print to the serial port too:
-      Serial.println(dataString);
+      
     }  
     else {
       Serial.println("error opening data file");
     }
   }
  
+}
+
+void readgps(){
+  char gps_data = GPS.read();
+  
+  
 }
