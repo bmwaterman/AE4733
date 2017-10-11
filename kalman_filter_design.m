@@ -1,56 +1,58 @@
+%% Homework 3 extra credit
+%
+% Bailey Waterman and Keshuai Xu
+%
+% We only have it in matlab. The data is collected with the arduino kit.
+% It was collected when we walked in a straight hall way back and forth.
+% The data collection is as fast as possible (approx 50 Hz). The time step is not exactly a constant.   
+% The state model does not handle angle wrapping, which caused some weird
+% arifacts in the output.
+%
+% To generate C code for arduino, we can use ccode function. But to prepare
+% for the matrices in C is too tedious. 
+%
+% The EKF algorithm is stolen from Wikipedia.
+%
+% <include>kalman_sensor_fusion.m</include>
+%
+
 clear variables
-syms gyro_x gyro_y gyro_z mag_x mag_y mag_z acc_x acc_y acc_z psi theta phi psid thetad phid dt real
-
-%% rotations
-% x rotation phi
-R_b_e = [1 0 0;
-         0 cos(phi) sin(phi);
-         0 -sin(phi) cos(phi)];
-     
-% y rotation theta
-R_a_b = [cos(theta) 0 -sin(theta);
-         0 1 0;
-         sin(theta) 0 cos(theta)];
-         
-% z rotation psi
-R_i_a = [cos(psi) sin(psi) 0;
-         -sin(psi) cos(psi) 0;
-         0 0 1];
-
+syms gyro_x gyro_y gyro_z psi theta phi psid thetad phid dt real
 
 %%
 H_321 = @(theta, phi) [-sin(theta) 0 1; 
     sin(phi)*cos(theta) cos(phi) 0;
     cos(phi)*cos(theta) -sin(phi) 0];
 
-x = [psi theta phi]';
-u = [gyro_x gyro_y gyro_z dt]';
-f_expr = x + (H_321(theta, phi) \ u(1:3, :)) * u(4, :);
-h_expr = eye(3) * x;
-F_expr = jacobian(f_expr, x);
-H_expr = jacobian(h_expr, x);
+x = [psi theta phi]'; % state
+u = [gyro_x gyro_y gyro_z dt]'; 
+f_expr = x + (H_321(theta, phi) \ u(1:3, :)) * u(4, :); % state model
+h_expr = eye(3) * x; % observation model
+F_expr = jacobian(f_expr, x); % linearized state model
+H_expr = jacobian(h_expr, x); % linearized observation model
 
 %%
 close all
 
 n_states = 3;
 n_measurements = 3;
+
 x_prev = [0 0 pi]';
 u_prev = [0 0 0 0.02]';
 P_prev = eye(n_states);
+
 Q = eye(n_states) * 1e-2;
 R = eye(n_measurements) * 1e-0;
 
 data = csvread('hw3q7_2.csv',1,0);
 time_stamp = data(:, 1)';
-% acc_readings = data(:, 2:4)';
 gyro_readings = data(:, 5:7)';
-% mag_readings = data(:, 8:10)';
 heading = deg2rad(data(:, 13:-1:11)');
 dt = [0.02, diff(time_stamp)];
 
 z_traj = heading;
 u_traj = [gyro_readings; dt];
+
 f_fun = matlabFunction(f_expr, 'Vars', {x,u});
 F_fun = matlabFunction(F_expr, 'Vars', {x,u});
 h_fun = matlabFunction(h_expr, 'Vars', {x});
@@ -65,6 +67,18 @@ for t = 2:size(z_traj,2)
     P_prev = P_estimate;
 end
 
-plot(time_stamp, x_traj(1:3,:))
+figure()
+plot(time_stamp, rad2deg(x_traj(1:3,:)))
+xlabel('time (sec)');
+ylabel ('euler angles (deg)');
+title('EKF filtered headings');
+legend ('yaw(psi)','pitch(theta)','roll(phi)')
+
+figure()
+plot(time_stamp, rad2deg(heading))
+xlabel('time (sec)');
+ylabel ('euler angles (deg)');
+title('raw headings from magnetometer');
+legend ('yaw(psi)','pitch(theta)','roll(phi)')
 
 
