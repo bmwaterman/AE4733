@@ -46,6 +46,8 @@ h = [omega_ie_e; mag_e; acc_e];
 H = jacobian(h, x)
 
 %%
+close all
+
 n_states = 6;
 n_measurements = 9;
 x_prev = zeros(6,1);
