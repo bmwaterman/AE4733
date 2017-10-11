@@ -20,6 +20,6 @@ lookup_accel
 
 
 save('target_inputs_T1.mat')
-% save('to_group11_from_group15.mat')
-% save('to_group13_from_group15.mat')
-% save('to_group17_from_group15.mat')
+save('to_group11_from_group15.mat')
+save('to_group13_from_group15.mat')
+save('to_group17_from_group15.mat')
