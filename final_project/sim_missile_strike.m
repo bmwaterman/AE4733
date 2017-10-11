@@ -56,7 +56,7 @@ sound(y,Fs);				% <-- ** COMMENT THIS LINE IF YOU DON'T WANT MUSIC
 seeker_noise	= 'no';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
 use_seeker_ekf	= 'no';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
 
-target_maneuver_num	= 1;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
+target_maneuver_num	= 6;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
 
 [parameters_system, initial_conditions] = ...
 	setup_system_parameters(target_maneuver_num, seeker_noise, use_seeker_ekf);

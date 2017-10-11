@@ -51,7 +51,5 @@ zdot_rel	= state_seeker_est(6);
 yaw_missile	= state_missile_est(5);
 ptc_missile	= state_missile_est(6);
 
-%**** YOUR CODE FOR COMPUTING THE PN GUIDANCE LAW GOES HERE
-%**** CAN COPY-PASTE FROM HW3 CODE
 
-accel_body = [0; 0; 0]; %**** REMOVE THIS LINE AFTER YOU FINISH CODING THE PN GUIDANCE LAW
+accel_body = Rte(yaw_missile, ptc_missile, 0) * pn_guidance_law_3d(state_seeker_est);
