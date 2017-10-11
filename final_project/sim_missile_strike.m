@@ -53,8 +53,8 @@ sound(y,Fs);				% <-- ** COMMENT THIS LINE IF YOU DON'T WANT MUSIC
 
 %% Setup simulation parameters
 
-seeker_noise	= 'no';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
-use_seeker_ekf	= 'no';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
+seeker_noise	= 'yes';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
+use_seeker_ekf	= 'yes';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
 
 target_maneuver_num	= 6;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
 
