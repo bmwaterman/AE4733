@@ -48,8 +48,8 @@ clear variables; close all; clc
 
 global input_missile_prev
 
-load dramatic_music.mat
-sound(y,Fs);				% <-- ** COMMENT THIS LINE IF YOU DON'T WANT MUSIC
+% load dramatic_music.mat
+% sound(y,Fs);				% <-- ** COMMENT THIS LINE IF YOU DON'T WANT MUSIC
 
 %% Setup simulation parameters
 
@@ -149,5 +149,5 @@ end
 
 print_punchline(pos_missile, pos_target, parameters_system)
 
-pause(10)
+% pause(10)
 clear sound
