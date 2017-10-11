@@ -24,12 +24,12 @@ H_321 = @(theta, phi) [-sin(theta) 0 1;
     sin(phi)*cos(theta) cos(phi) 0;
     cos(phi)*cos(theta) -sin(phi) 0];
 
-x = [psi theta phi]'; % state
-u = [gyro_x gyro_y gyro_z dt]'; 
-f_expr = x + (H_321(theta, phi) \ u(1:3, :)) * u(4, :); % state model
-h_expr = eye(3) * x; % observation model
-F_expr = jacobian(f_expr, x); % linearized state model
-H_expr = jacobian(h_expr, x); % linearized observation model
+x = [psi theta phi]' % state
+u = [gyro_x gyro_y gyro_z dt]' 
+f_expr = simplify(x + (H_321(theta, phi) \ u(1:3, :)) * u(4, :)) % state model
+h_expr = eye(3) * x % observation model
+F_expr = simplify(jacobian(f_expr, x)) % linearized state model
+H_expr = simplify(jacobian(h_expr, x)) % linearized observation model
 
 %%
 close all
