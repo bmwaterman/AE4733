@@ -39,7 +39,7 @@ x_prev = [0 0 pi]';
 u_prev = [0 0 0 0.02]';
 P_prev = eye(n_states);
 Q = eye(n_states) * 1e-2;
-R = eye(n_measurements,1) * 1e-0;
+R = eye(n_measurements) * 1e-0;
 
 data = csvread('hw3q7_2.csv',1,0);
 time_stamp = data(:, 1)';
