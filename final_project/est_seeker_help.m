@@ -31,7 +31,8 @@ ach = a_ch
 
 f = [state_seeker_est(4:6); ...
 	ach*sin(los_1) + acv*cos(los_1)*sin(los_2); ...
-	-ach*cos(los_1) + acv*sin(los_1)*sin(los_2); -acv*cos(los_2)]
+	-ach*cos(los_1) + acv*sin(los_1)*sin(los_2); ...
+    -acv*cos(los_2)]
 
 % acceleration_cmd_inertial = pn_guidance_law_3d(state_seeker_est);
 % 
