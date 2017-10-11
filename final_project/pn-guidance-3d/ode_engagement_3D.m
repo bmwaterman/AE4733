@@ -63,7 +63,7 @@ pos_rel		= pos_target - pos_missile;
 
 
 %**** INSERT THE NAME OF GUIDANCE LAW FUNCTION HERE*****
-fh_pn_guidance_law = []; % Replace the '[]' with: '@name_of_your_function' (w/o quotation marks)
+fh_pn_guidance_law = @pn_guidance_law_3d; % Replace the '[]' with: '@name_of_your_function' (w/o quotation marks)
 %{
 Your guidance law must be written as a MATLAB function that has:
 1. Inputs = [Relative position of target (3 intertial coord); 
@@ -73,10 +73,10 @@ Your guidance law must be written as a MATLAB function that has:
 	attached to the missile body axes. 
 %}
 
-missile_accel_body_cmd	= [0;0;0];
+% missile_accel_body_cmd	= [0;0;0];
 
 %**** UNCOMMENT THE FOLLOWING LINE WHEN TESTING YOUR GUIDANCE LAW ****
-% missile_accel_body_cmd	= fh_pn_guidance_law([pos_rel; xdot_rel; ydot_rel; zdot_rel]);
+missile_accel_body_cmd	= Rte(yaw_missile, ptc_missile, 0) \ fh_pn_guidance_law([pos_rel; xdot_rel; ydot_rel; zdot_rel]);
 
 switch target_maneuver_num
 	case 1
