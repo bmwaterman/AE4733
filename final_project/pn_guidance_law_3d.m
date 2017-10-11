@@ -19,10 +19,8 @@ a_ch = N1 * v_c * alpha_dot;
 a_cv = N2 * v_c * beta_dot;
 
 
-%a_ch_i = [0 0 1]' * a_ch;
-a_ch_i = Rte(alpha, beta, 0) \ ([1 0 0]' * a_ch);
+a_ch_i = Rte(alpha, beta, 0) \ ([0 1 0]' * a_ch);
 a_cv_i = Rte(alpha, beta, 0) \ ([0 0 1]' * a_cv);
-%a_cv_i = [cos(alpha) -cos(beta) -sin(beta)]' * a_cv;
 
 acceleration_cmd_inertial = a_ch_i + a_cv_i;
 
