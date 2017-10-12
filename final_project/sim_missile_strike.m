@@ -53,10 +53,10 @@ global input_missile_prev
 
 %% Setup simulation parameters
 
-seeker_noise	= 'yes';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
-use_seeker_ekf	= 'yes';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
+seeker_noise	= 'no';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
+use_seeker_ekf	= 'no';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
 
-target_maneuver_num	= 2;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
+target_maneuver_num	= 5;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
 
 [parameters_system, initial_conditions] = ...
 	setup_system_parameters(target_maneuver_num, seeker_noise, use_seeker_ekf);
@@ -148,7 +148,5 @@ for m1 = 1:ceil(numel(t_sim)/150):numel(t_sim)
 end
 
 print_punchline(pos_missile, pos_target, parameters_system)
-close all
-
-% pause(10)
+pause(10)
 clear sound

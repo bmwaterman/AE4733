@@ -1,6 +1,6 @@
 function [ acceleration_cmd_inertial ] = pn_guidance_law_3d( p_and_p_dot )
 
-N1 = 20;
+N1 = 50;
 N2 = N1;
 
 alpha_dot_fun = @(in1)(in1(1,:).*in1(5,:)-in1(4,:).*in1(2,:))./(in1(1,:).^2+in1(2,:).^2);
