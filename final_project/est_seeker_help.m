@@ -1,5 +1,9 @@
 clear variables
 syms x y z xd yd zd real;
+
+% assume(xd ~= 0)
+% assume(yd ~= 0)
+% assume(zd ~= 0)
 state_seeker_est = [x y z xd yd zd]';
 p_and_p_dot = [x y z xd yd zd]';
 %% guidance
@@ -42,6 +46,10 @@ acceleration_cmd_inertial = a_ch_i + a_cv_i;
 % acceleration_cmd_inertial = pn_guidance_law_3d(state_seeker_est);
 f = [state_seeker_est(4:6); - acceleration_cmd_inertial];
 
-A = jacobian(f, state_seeker_est);
+assume(x ~= 0);
+assume(y ~= 0);
+assume(z ~= 0);
+
+A = simplify(jacobian(f, state_seeker_est), 'IgnoreAnalyticConstraints', true, 'Criterion','preferReal','Steps',100);
 matlabFunction(A, 'Vars', {state_seeker_est}, 'File', 'A_fun');
 
