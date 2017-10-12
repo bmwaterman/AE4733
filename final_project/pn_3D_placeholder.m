@@ -52,4 +52,4 @@ yaw_missile	= state_missile_est(5);
 ptc_missile	= state_missile_est(6);
 
 
-accel_body = Rte(yaw_missile, ptc_missile, 0) * pn_guidance_law_3d_cowlagi(state_seeker_est);
+accel_body = Rte(yaw_missile, ptc_missile, 0) * pn_guidance_law_3d(state_seeker_est);

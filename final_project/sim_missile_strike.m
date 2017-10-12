@@ -56,12 +56,12 @@ global input_missile_prev
 seeker_noise	= 'yes';	% <-- ** CHANGE TO 'yes' TO INTRODUCE SEEKER NOISE
 use_seeker_ekf	= 'yes';	% <-- ** CHANGE TO 'yes' TO SEE IF YOUR SEEKER EKF WORKS
 
-target_maneuver_num	= 1;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
+target_maneuver_num	= 2;	% <-- ** CHANGE TARGET MANEUVER NUMBER HERE
 
 [parameters_system, initial_conditions] = ...
 	setup_system_parameters(target_maneuver_num, seeker_noise, use_seeker_ekf);
 
-parameters_system.simulation.fh_seeker		= @est_seeker2;					% <-- ** COMPLETE THE CODE IN THE FILE est_seeker.m
+parameters_system.simulation.fh_seeker		= @est_seeker;					% <-- ** COMPLETE THE CODE IN THE FILE est_seeker.m
 parameters_system.simulation.fh_guidance	= @pn_3D_placeholder;			% <-- ** TYPE IN THE NAME OF YOUR GUIDANCE FUNCTION HERE
 
 
@@ -148,6 +148,7 @@ for m1 = 1:ceil(numel(t_sim)/150):numel(t_sim)
 end
 
 print_punchline(pos_missile, pos_target, parameters_system)
+close all
 
 % pause(10)
 clear sound
